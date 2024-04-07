@@ -1,0 +1,24 @@
+.frame-avatar{
+     -fx-background-color: #E9FFDB;
+ }
+.vertical{
+    -fx-background-color:  black;
+}
+
+.slideBar{
+    -fx-background-color:  #E9FFDB;
+}
+
+.paneBlur{
+    -fx-background-color:  black;
+}
+
+.mainWork{
+    -fx-background-color:  #FAFAD2;
+}
+
+.jfx-button{
+    -fx-background-color: #E9FFDB;
+    -fx-font-weight: bold;
+}
+

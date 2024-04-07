@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+
+<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.prolocktech.view.mainui.FullImage">
+   <children>
+      <ScrollPane fx:id="scrollPane" prefHeight="600.0" prefWidth="550.0">
+         <content>
+            <FlowPane fx:id="flowPane" prefHeight="600.0" prefWidth="550.0" styleClass="mainWork" stylesheets="@../MainUI.css" />
+         </content>
+      </ScrollPane>
+      <ImageView fx:id="back" fitHeight="40.0" fitWidth="40.0" layoutX="10.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../logo.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

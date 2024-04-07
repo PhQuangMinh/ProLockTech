@@ -1,0 +1,37 @@
+.parent{
+    -fx-background-color: black;
+}
+.button{
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-background-color: black;
+    -fx-text-fill: #fff;
+    -fx-style: border;
+}
+.button1{
+     -fx-font-weight: bold;
+     -fx-background-radius: 40px;
+     -fx-background-color: black;
+     -fx-text-fill: #fff;
+      -fx-style: border;
+}
+.button:hover{
+    -fx-background-color: transparent;
+    -fx-background-radius: 3px;
+    -fx-text-fill: #000;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-border-radius: 10px;
+}
+
+.label-button{
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.label-button:hover{
+    -fx-text-fill: black;
+    -fx-underline: true;
+    -fx-text-underline: black;
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.prolocktech.view.mainui.DisplayImage">
+   <ImageView fx:id="imageDisplay" fitHeight="400.0" fitWidth="400.0" layoutX="75.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@../logo.png" />
+   </ImageView>
+   <JFXButton fx:id="up" layoutX="235.0" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="80.0" stylesheets="@../style.css" text="Up" />
+   <JFXButton fx:id="down" layoutX="235.0" layoutY="543.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="80.0" stylesheets="@../style.css" text="Down" />
+   <ImageView fx:id="grid" fitHeight="40.0" fitWidth="40.0" layoutX="10.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@../logo.png" />
+   </ImageView>
+   <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="182.0" layoutY="485.0" pickOnBounds="true" preserveRatio="true" />
+   <ImageView fx:id="avatar" fitHeight="40.0" fitWidth="40.0" layoutX="199.0" layoutY="480.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@../logo.png" />
+   </ImageView>
+   <Label fx:id="nameUser" layoutX="253.0" layoutY="490.0" text="Name User">
+      <font>
+         <Font name="System Bold" size="14.0" />
+      </font>
+   </Label>
+   <Label fx:id="timePost" layoutX="261.0" layoutY="510.0" text="time" textFill="#766464">
+      <font>
+         <Font size="14.0" />
+      </font></Label>
+   <ImageView fx:id="save" fitHeight="40.0" fitWidth="40.0" layoutX="500.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../logo.png" />
+      </image>
+   </ImageView>
+   <ImageView fx:id="delete" fitHeight="40.0" fitWidth="40.0" layoutX="455.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../logo.png" />
+      </image>
+   </ImageView>
+</AnchorPane>
