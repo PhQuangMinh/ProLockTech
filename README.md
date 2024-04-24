@@ -10,18 +10,25 @@ The project was done by **Phạm Quang Minh**, in the course of Object Oriented 
 - Run the project
 - Run ProLockTech.jar
 # Demo
+
 Demo Video: https://www.youtube.com/watch?v=7d10WfI8tAk
 # Images
+
 - **Login**
 ![alt text](image/login.png)
+
 - **Registration**
 ![alt text](image/registration.png)
+
 - **Add Image**
-![alt text](image/AddImage.png)
+![alt text](image/addImage.png)
+
 - **Update profile**
 ![alt text](image/updateProfile.png)
+
 - **Main interface**
 ![alt text](image/mainInterface.png)
+
 # Usage
 - Project Structure
 ```bash
