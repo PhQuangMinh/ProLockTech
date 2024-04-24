@@ -17,7 +17,7 @@ Demo Video: https://www.youtube.com/watch?v=7d10WfI8tAk
 - **Registration**
 ![alt text](image/registration-1.png)
 - **Add Image**
-![alt text](image/AddImage-1.png)
+![alt text](image/AddImage.png)
 - **Update profile**
 ![alt text](image/updateProfile-1.png)
 - **Main interface**
