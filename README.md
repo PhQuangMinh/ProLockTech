@@ -13,15 +13,15 @@ The project was done by **Phạm Quang Minh**, in the course of Object Oriented 
 Demo Video: https://www.youtube.com/watch?v=7d10WfI8tAk
 # Images
 - **Login**
-![alt text](image/login-1.png)
+![alt text](image/login.png)
 - **Registration**
-![alt text](image/registration-1.png)
+![alt text](image/registration.png)
 - **Add Image**
 ![alt text](image/AddImage.png)
 - **Update profile**
-![alt text](image/updateProfile-1.png)
+![alt text](image/updateProfile.png)
 - **Main interface**
-![alt text](image/mainInterface-1.png)
+![alt text](image/mainInterface.png)
 # Usage
 - Project Structure
 ```bash
