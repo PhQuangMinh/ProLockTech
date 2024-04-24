@@ -15,18 +15,23 @@ Demo Video: https://www.youtube.com/watch?v=7d10WfI8tAk
 # Images
 
 - **Login**
+
 ![alt text](image/login.png)
 
 - **Registration**
+  
 ![alt text](image/registration.png)
 
 - **Add Image**
+
 ![alt text](image/addImage.png)
 
 - **Update profile**
+  
 ![alt text](image/updateProfile.png)
 
 - **Main interface**
+  
 ![alt text](image/mainInterface.png)
 
 # Usage
