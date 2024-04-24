@@ -7,7 +7,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import main.prolocktech.controller.FileUser;
+import main.prolocktech.controller.FirebaseUser;
 import main.prolocktech.model.User;
 
 import java.util.Objects;
@@ -73,8 +73,7 @@ public class Password {
         if (currentPassword.getText().isEmpty() || newPassword.getText().isEmpty() || confirmPassword.getText().isEmpty()) return false;
         if (!currentPassword.getText().equals(user.getPassword())) return false;
         if (!newPassword.getText().equals(confirmPassword.getText())) return false;
-//        if (newPassword.getText().length()<8) return false;
-        return true;
+        return newPassword.getText().length() >= 8;
     }
 
     public void buttonConfirm(){
@@ -82,8 +81,8 @@ public class Password {
         if (checkPassword()){
             User newUser = user;
             newUser.setPassword(newPassword.getText());
-            FileUser managerFile = new FileUser();
-            managerFile.updateUser(user, newUser);
+            FirebaseUser firebaseUser = new FirebaseUser();
+            firebaseUser.updateUser(newUser);
             alert.setTextFill(Color.GREEN);
             alert.setText("Update password successfully");
         }

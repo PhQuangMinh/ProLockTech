@@ -13,15 +13,15 @@ The project was done by **Phạm Quang Minh**, in the course of Object Oriented 
 Demo Video: https://www.youtube.com/watch?v=7d10WfI8tAk
 # Images
 - **Login**
-![alt text](login-1.png)
+![alt text](image/login-1.png)
 - **Registration**
-![alt text](registration-1.png)
+![alt text](image/registration-1.png)
 - **Add Image**
-![alt text](AddImage-1.png)
+![alt text](image/AddImage-1.png)
 - **Update profile**
-![alt text](updateProfile-1.png)
+![alt text](image/updateProfile-1.png)
 - **Main interface**
-![alt text](mainInterface-1.png)
+![alt text](image/mainInterface-1.png)
 # Usage
 - Project Structure
 ```bash
@@ -60,9 +60,9 @@ Demo Video: https://www.youtube.com/watch?v=7d10WfI8tAk
 │   │   │   ├── Main.java
 ```
 ## Class Diagram
-![alt text](ClassDiagram.png)
+![alt text](image/ClassDiagram.png)
 ## Activity Diagram
-![alt text](ActivityDiagram.png)
+![alt text](image/ActivityDiagram.png)
 
 # Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

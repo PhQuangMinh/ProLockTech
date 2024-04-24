@@ -1,38 +1,39 @@
 package main.prolocktech.model;
 
-import com.google.cloud.storage.Blob;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.File;
 
 public class Picture extends ImageView {
-    private String nameUser;
+    private String nameUser, nameFile;
     private File file;
 
     private User user;
-    private Image image;
-    private Blob blob;
 
-    public Picture(String nameUser, File file, User user) {
-        this.nameUser = nameUser;
-        this.file = file;
+    private long timeCreated;
+
+    public Picture(User user, long timeCreated, String nameFile) {
         this.user = user;
+        this.timeCreated = timeCreated;
+        this.nameFile = nameFile;
     }
 
-    public Picture(Image image, User user, Blob blob) {
-        this.image = image;
-        this.user = user;
-        this.blob = blob;
+    public String getNameFile() {
+        return nameFile;
     }
 
-    public Blob getBlob() {
-        return blob;
+    public void setNameFile(String nameFile) {
+        this.nameFile = nameFile;
     }
 
-    public void setBlob(Blob blob) {
-        this.blob = blob;
+    public long getTimeCreated() {
+        return timeCreated;
     }
+
+    public void setTimeCreated(long timeCreated) {
+        this.timeCreated = timeCreated;
+    }
+
 
     public User getUser() {
         return user;
@@ -56,8 +57,5 @@ public class Picture extends ImageView {
 
     public void setFile(File file) {
         this.file = file;
-    }
-    public long getCreationTime() {
-        return blob.getCreateTime();
     }
 }

@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import main.prolocktech.controller.FirebaseImage;
 import main.prolocktech.controller.FirebaseUser;
+import main.prolocktech.model.Picture;
 import main.prolocktech.model.User;
 
 import javax.swing.*;
@@ -25,13 +26,7 @@ import java.util.Objects;
 
 public class Main extends Application {
 
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(Stage stage) {
+    public void init(Stage stage, ArrayList<User> users){
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("view/logo.png")));
         stage.setTitle("ProLockTech");
         stage.setResizable(true);
@@ -39,7 +34,7 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader(InitApp.class.getResource("InitApp.fxml"));
             Parent root = loader.load();
             InitApp initApp = loader.getController();
-            initApp.init();
+            initApp.init(users);
             Scene scene = new Scene(root, 600, 600);
             stage.getIcons().add(image);
             stage.setScene(scene);
@@ -47,5 +42,16 @@ public class Main extends Application {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) {
+        FirebaseUser firebaseUser = new FirebaseUser();
+        firebaseUser.readUser(stage);
     }
 }

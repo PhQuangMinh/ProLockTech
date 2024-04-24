@@ -8,7 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import main.prolocktech.controller.FileUser;
+import main.prolocktech.controller.FirebaseUser;
+import main.prolocktech.model.Picture;
 import main.prolocktech.model.User;
 
 import java.io.IOException;
@@ -25,9 +26,9 @@ public class CreatePassword {
     private PasswordField newPassword, confirmPassword;
     private String emailUser;
 
-    public void init(String emailUser){
+    public void init(String emailUser, ArrayList<User> listUsers){
         this.emailUser = emailUser;
-        resetButton.setOnAction(event -> resetEvent());
+        resetButton.setOnAction(event -> resetEvent(listUsers));
         confirm.setVisible(false);
     }
 
@@ -37,34 +38,32 @@ public class CreatePassword {
         return newPassword.getText().length() >= 8;
     }
 
-    private User getUser(){
+    private User getUser(ArrayList<User> listUsers){
         User user = null;
-        FileUser file = new FileUser();
-        ArrayList<User> list = file.readUser();
-        for (User user1 : list) {
+        for (User user1 : listUsers) {
             if (user1.getEmail().equals(emailUser)) {
                 user = user1;
             }
         }
         return user;
     }
-    private void updateUser(){
-        User user = getUser();
+    private void updateUser(ArrayList<User> listUsers){
+        User user = getUser(listUsers);
         user.setPassword(newPassword.getText());
-        FileUser managerFile = new FileUser();
-        managerFile.updateUser(user, user);
+        FirebaseUser firebaseUser = new FirebaseUser();
+        firebaseUser.updateUser(user);
     }
 
-    private void resetEvent(){
+    private void resetEvent(ArrayList<User> listUsers){
         if (checkPassword()){
-            updateUser();
+            updateUser(listUsers);
             try {
                 FXMLLoader loader = new FXMLLoader(CreatePassword.class.getResource("Success.fxml"));
                 Parent root = loader.load();
                 Success resetSuccess = loader.getController();
                 pane.getChildren().removeAll();
                 pane.getChildren().setAll(root);
-                resetSuccess.init("Password changed", "Your password has been changed successfully.");
+                resetSuccess.init("Password changed", "Your password has been changed successfully.", listUsers);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

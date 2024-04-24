@@ -3,28 +3,25 @@ package main.prolocktech.view.register;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import main.prolocktech.controller.FileUser;
-import main.prolocktech.controller.SendMail;
 import main.prolocktech.model.DateOfBirth;
+import main.prolocktech.model.Picture;
 import main.prolocktech.model.User;
 import javafx.collections.FXCollections;
 import main.prolocktech.view.forgotpassword.CodeOTP;
 import main.prolocktech.view.login.Login;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
-public class Registration implements Initializable {
+public class Registration{
     @FXML
     private TextField firstName, lastName, email, password, confirmPassword;
     @FXML
@@ -65,23 +62,23 @@ public class Registration implements Initializable {
         year.setItems(observableList);
         year.setPromptText(("Year"));
     }
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+
+    public void init(ArrayList<User> listUsers) {
         setDay();
         setMonth();
         setYear();
-        signIn.setOnMouseClicked(event -> cancel());
-        register.setOnAction(event -> register());
+        signIn.setOnMouseClicked(event -> cancel(listUsers));
+        register.setOnAction(event -> register(listUsers));
 
     }
-    public void cancel(){
+    public void cancel(ArrayList<User> listUsers) {
         FXMLLoader loader = new FXMLLoader(Login.class.getResource("Login.fxml"));
         try {
             Parent root = loader.load();
             Login login = loader.getController();
             pane.getChildren().removeAll();
             pane.getChildren().setAll(root);
-            login.init();
+            login.init(listUsers);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -102,22 +99,18 @@ public class Registration implements Initializable {
         return password.getText().length() >= 8;
     }
 
-    private boolean checkEmail(){
-        FileUser fileUser = new FileUser();
-        ArrayList<User> list = fileUser.readUser();
-        for (User user : list) {
-            if (user.getEmail().equals(email.getText())) {
-                return false;
-            }
+    private boolean checkEmail(ArrayList<User> list){
+        for (User user : list){
+            if (user.getEmail().equals(email.getText())) return false;
         }
         return true;
     }
 
-    private int checkValid(){
-        if (checkCombo() || checkText() || checkPassword() || !checkEmail()){
+    private int checkValid(ArrayList<User> listUsers){
+        if (checkCombo() || checkText() || !checkPassword() || !checkEmail(listUsers)){
             if (checkCombo() || checkText()) return 1;
-            if (!checkEmail()) return 2;
-            if (!checkPassword()) return 3;
+            if (!checkPassword()) return 2;
+            if (!checkEmail(listUsers)) return 3;
         }
         return 0;
     }
@@ -125,31 +118,33 @@ public class Registration implements Initializable {
         DateOfBirth date = new DateOfBirth(day.getValue(), month.getValue(), year.getValue());
         return new User(firstName.getText(), lastName.getText(), email.getText(), password.getText(), date);
     }
-    public void register(){
-        int valueCheck = checkValid();
-        System.out.println(valueCheck);
+
+    private void interfaceOTP(ArrayList<User> listUsers){
+        inform.setVisible(false);
+        User userNow = getUser();
+        try {
+            FXMLLoader loader = new FXMLLoader(CodeOTP.class.getResource("CodeOTP.fxml"));
+            Parent root = loader.load();
+            CodeOTP codeOTP = loader.getController();
+            pane.getChildren().removeAll();
+            pane.getChildren().setAll(root);
+            codeOTP.init(email.getText(), "register", userNow, null, listUsers, null, null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void register(ArrayList<User> listUsers){
+        int valueCheck = checkValid(listUsers);
         if (valueCheck==0) {
-            inform.setVisible(false);
-            User user = getUser();
-            try {
-                FXMLLoader loader = new FXMLLoader(CodeOTP.class.getResource("CodeOTP.fxml"));
-                Parent root = loader.load();
-                CodeOTP codeOTP = loader.getController();
-                pane.getChildren().removeAll();
-                pane.getChildren().setAll(root);
-                codeOTP.init(email.getText(), "register", user);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            interfaceOTP(listUsers);
             return;
         }
         inform.setVisible(true);
         inform.setTextFill(Color.RED);
         if (valueCheck==1) inform.setText("Please provide complete information.");
         else
-        if (valueCheck==2) inform.setText("Email already exists!");
-        else
-        if (valueCheck==3) inform.setText("Invalid password!");
+            if (valueCheck==2) inform.setText("Invalid password!");
+            else inform.setText("Email already exists!");
     }
 
 }

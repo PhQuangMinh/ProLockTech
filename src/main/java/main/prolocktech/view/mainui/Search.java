@@ -12,8 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import main.prolocktech.controller.FileImage;
-import main.prolocktech.controller.FileUser;
+import main.prolocktech.controller.FirebaseImage;
 import main.prolocktech.model.Picture;
 import main.prolocktech.model.User;
 
@@ -26,7 +25,6 @@ public class Search {
     private ImageView avatar;
     @FXML
     private JFXListView<User> listView;
-
     @FXML
     private TextField searchBar;
     private void filterUser(ObservableList<User> data, ListView<User> listView, String search){
@@ -39,20 +37,19 @@ public class Search {
         }
         listView.setItems(filteredData);
     }
-    public void makeSearch(Stage stage, User user){
+    public void makeSearch(Stage stage, User user, ArrayList<User> listUsers, ArrayList<Picture> pictures){
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("logo.png")));
         avatar.setImage(image);
-        FileUser managerFile = new FileUser();
-        ArrayList<User> list = managerFile.readUser();
-        ObservableList<User> data = FXCollections.observableArrayList(list);
+        ObservableList<User> data = FXCollections.observableArrayList(listUsers);
         searchBar.setPromptText("Search...");
         listView.setItems(data);;
         searchBar.textProperty().addListener(((observable, oldValue, newValue) -> {
             filterUser(data, listView, newValue);
         }));
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            FileImage fileImage = new FileImage();
-            ArrayList<Picture> listImage = fileImage.takePictureUser(newValue);
+            FirebaseImage firebaseImage = new FirebaseImage();
+            ArrayList<Picture> listImage = firebaseImage.getPictureUser(newValue);
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("MainUI.fxml"));
                 Parent root = loader.load();
@@ -60,7 +57,7 @@ public class Search {
                 mainUI.setUser(user);
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
-                mainUI.init();
+                mainUI.init(listUsers, pictures);
                 mainUI.makeDisPlayImage(listImage, false);
             } catch (IOException e) {
                 throw new RuntimeException(e);

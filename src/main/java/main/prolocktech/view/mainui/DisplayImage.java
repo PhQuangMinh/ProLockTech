@@ -11,7 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import main.prolocktech.controller.FileImage;
+import main.prolocktech.controller.FirebaseImage;
 import main.prolocktech.controller.ManagerPicture;
 import main.prolocktech.model.Picture;
 import main.prolocktech.model.User;
@@ -60,38 +60,39 @@ public class DisplayImage {
         clip.setWidth(40);
         clip.setArcHeight(40);
         clip.setArcWidth(40);
+        avatar.setPreserveRatio(false);
         avatar.setClip(clip);
     }
 
 
     public void init(ArrayList<Picture> list, String start, User user){
         this.user = user;
-        System.out.println(list.size() + "Anh");
-//        try{
-            images = list;
-            setSave();
-            setDelete();
-            setGrid();
-            if (images.isEmpty()){
-                setStatus(false);
-                return;
-            }
-            setStatus(true);
-            int begin = Integer.parseInt(start);
-            delete.setVisible(list.get(begin).getUser().getIndex().equals(this.user.getIndex()));
-            setClipImage();
-            setClipAvatar();
-            if (begin==0) up.setVisible(false);
-            if (begin==list.size()-1) down.setVisible(false);
-            index = new AtomicInteger(begin);
-            setInformationPicture(list.get(begin));
-            imageDisplay.setImage(list.get(begin).getImage());
-            imageDisplay.setId(String.valueOf(begin));
-            down.setOnAction(event -> makeButtonDown(list));
-            up.setOnAction(event -> makeButtonUp(list));
-//        } catch (Exception e){
-//            System.out.println("No image");
-//        }
+        images = list;
+        setSave();
+        setDelete();
+        setGrid();
+        if (list.isEmpty()){
+            setStatus(false);
+            return;
+        }
+        setImageDisplay(start);
+    }
+
+    private void setImageDisplay(String start){
+        setStatus(true);
+        int begin = Integer.parseInt(start);
+        delete.setVisible(images.get(begin).getUser().getIndex().equals(this.user.getIndex()));
+        setClipImage();
+        setClipAvatar();
+        if (begin==0) up.setVisible(false);
+        if (begin==images.size()-1) down.setVisible(false);
+        index = new AtomicInteger(begin);
+        setInformationPicture(images.get(begin));
+        imageDisplay.setPreserveRatio(false);
+        imageDisplay.setImage(images.get(begin).getImage());
+        imageDisplay.setId(String.valueOf(begin));
+        down.setOnAction(event -> makeButtonDown(images));
+        up.setOnAction(event -> makeButtonUp(images));
     }
     private void setGrid(){
         grid.setOnMouseClicked(event -> makeGrid());
@@ -121,7 +122,7 @@ public class DisplayImage {
         save.setOnMouseClicked(event -> saveImage());
     }
 
-    public void deleteImage(){
+    private boolean getAlert(){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confimation");
         alert.setHeaderText("Are you sure you want to delete this image?");
@@ -131,28 +132,32 @@ public class DisplayImage {
 
         alert.getButtonTypes().setAll(yes, no);
         Optional<ButtonType> result = alert.showAndWait();
+        return result.get().getButtonData() == ButtonBar.ButtonData.YES;
+    }
 
-        if (result.get().getButtonData() == ButtonBar.ButtonData.YES) {
-            File file = images.get(index.get()).getFile();
-            file.delete();
+    public void deleteImage(){
+        if (getAlert()) {
+            String pathFile = images.get(index.get()).getNameFile();
+            FirebaseImage firebaseImage = new FirebaseImage();
+            firebaseImage.deleteImage(pathFile);
+            if (images.size()==1) {
+                images.clear();
+                setStatus(false);
+                Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("logo.png")));
+                imageDisplay.setImage(image);
+                return;
+            }
             if (index.get() < images.size()-1) {
                 images.remove(index.get());
-                imageDisplay.setImage(images.get(index.get()).getImage());
                 for (int i = index.get(); i < images.size(); i++) {
                     images.get(i).setId(String.valueOf(i));
                 }
             }
             else{
-                images.remove(index.get());
-                if (!images.isEmpty()) {
-                    index.decrementAndGet();
-                    imageDisplay.setImage(images.get(index.get()).getImage());
-                }
-                else{
-                    Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("logo.png")));
-                    imageDisplay.setImage(image);
-                }
+                images. remove(index.get());
+                index.decrementAndGet();
             }
+            setImageDisplay(String.valueOf(index.get()));
         }
 
     }
@@ -183,12 +188,11 @@ public class DisplayImage {
         return "png";
     }
     public void setInformationPicture(Picture picture) {
-        FileImage fileImage = new FileImage();
-        ArrayList<ImageView> list = fileImage.getImageFromFolder("information/imageuser/user" + picture.getUser().getIndex() + "/avatar");
-        avatar.setImage(list.get(0).getImage());
-        nameUser.setText(picture.getNameUser());
+        FirebaseImage firebaseImage = new FirebaseImage();
+        avatar.setImage(firebaseImage.getAvatar(user));
+        nameUser.setText(picture.getUser().getFirstName() + " " + picture.getUser().getLastName());
         ManagerPicture manager = new ManagerPicture();
-        timePost.setText(manager.getTime(picture.getFile()));
+        timePost.setText(manager.getTime(picture));
     }
     public void makeButtonDown(ArrayList<Picture> list) {
         up.setVisible(true);

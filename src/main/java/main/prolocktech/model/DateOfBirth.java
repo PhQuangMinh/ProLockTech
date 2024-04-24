@@ -2,10 +2,14 @@ package main.prolocktech.model;
 
 import java.io.Serializable;
 
-public class DateOfBirth implements Serializable {
+public class DateOfBirth{
     private String day;
     private String month;
     private String year;
+
+    public DateOfBirth(){
+
+    }
 
     public DateOfBirth(String day, String month, String year) {
         this.day = day;

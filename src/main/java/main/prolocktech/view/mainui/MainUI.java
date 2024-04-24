@@ -14,7 +14,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.prolocktech.InitApp;
-import main.prolocktech.controller.FileImage;
+import main.prolocktech.controller.FirebaseImage;
+import main.prolocktech.controller.FirebaseUser;
+import main.prolocktech.controller.ManagerPicture;
 import main.prolocktech.model.Picture;
 import main.prolocktech.model.User;
 
@@ -35,6 +37,8 @@ public class MainUI {
     private FXMLLoader loader;
     private User user;
 
+    private ArrayList<Picture> pictures;
+    private ArrayList<User> listUsers;
     public User getUser() {
         return user;
     }
@@ -59,15 +63,15 @@ public class MainUI {
         setClip();
         buttonHome.setOnMouseClicked(event -> {
             menu.setDisable(false);
-            FileImage fileImage = new FileImage();
-            ArrayList<Picture> list = fileImage.takePictures();
-            makeDisPlayImage(list, true);
+            FirebaseImage firebaseImage = new FirebaseImage();
+            ArrayList<Picture> pictures = firebaseImage.getPictures(listUsers);
+            makeDisPlayImage(pictures, true);
         });
         buttonMyImage.setOnMouseClicked(event ->{
             menu.setDisable(false);
-            FileImage fileImage = new FileImage();
-            ArrayList<Picture> list = fileImage.takePictureUser(user);
-            makeDisPlayImage(list, true);
+            FirebaseImage firebaseImage = new FirebaseImage();
+            ArrayList<Picture> pictures = firebaseImage.getPictureUser(user);
+            makeDisPlayImage(pictures, true);
         });
         buttonAdd.setOnMouseClicked(event ->{
             menu.setDisable(false);
@@ -75,11 +79,11 @@ public class MainUI {
         });
         buttonSearch.setOnMouseClicked(event ->{
             menu.setDisable(false);
-            makeSearch();
+            makeSearch(pictures);
         });
         buttonProfile.setOnMouseClicked(event ->{
             menu.setDisable(false);
-            makeProfile(true);
+            makeProfile(true, pictures);
         });
         buttonPassword.setOnMouseClicked(event ->{
             menu.setDisable(false);
@@ -92,7 +96,7 @@ public class MainUI {
     }
 
     private void init(Double fromValue, Double toValue, Double setX, Boolean check){
-        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.5), paneBlur);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.05), paneBlur);
         fadeTransition.setFromValue(fromValue);
         fadeTransition.setToValue(toValue);
         fadeTransition.play();
@@ -101,7 +105,7 @@ public class MainUI {
                 paneBlur.setVisible(false);
             });
         }
-        TranslateTransition translate = new TranslateTransition(Duration.seconds(0.5), slideBar);
+        TranslateTransition translate = new TranslateTransition(Duration.seconds(0.05), slideBar);
         translate.setByX(setX);
         translate.play();
     }
@@ -112,36 +116,37 @@ public class MainUI {
         });
     }
     public void setAvatar() {
-        FileImage fileImage = new FileImage();
-        ArrayList<ImageView> list = fileImage.getImageFromFolder("information/imageuser/user" + user.getIndex() + "/avatar");
-        avatar.setImage(list.get(0).getImage());
+        FirebaseImage firebaseImage = new FirebaseImage();
+        avatar.setImage(firebaseImage.getAvatar(user));
+        avatar.setPreserveRatio(false);
         String fullName = user.getFirstName() + " " + user.getLastName();
         nameAvatar.setStyle("-fx-font-weight: bold;");
         nameAvatar.setStyle("-fx-font-size: 15px;");
         nameAvatar.setText(fullName);
     }
     private void makeMenu(){
-        setAvatar();
         menu.setOnMouseClicked(event ->{
+            setAvatar();
             menu.setDisable(true);
             paneBlur.setVisible(true);
             init(0.0, 0.5, 500.0, false);
         });
     }
-    public void init(){
+
+    public void init(ArrayList<User> listUsers, ArrayList<Picture> pictures){
+        this.pictures = pictures;
+        this.listUsers = listUsers;
         paneBlur.setVisible(false);
         makeMenu();
         makePaneBlur();
         makeSlideBar();
-        FileImage fileImage = new FileImage();
-        ArrayList<Picture> list = fileImage.takePictures();
-        makeDisPlayImage(list, false);
-        System.out.println(slideBar.getLayoutX());
+//        FirebaseImage firebaseImage = new FirebaseImage();
+        makeDisPlayImage(pictures, false);
     }
 
-    public void returnProfile(){
-        init();
-        makeProfile(false);
+    public void returnProfile(ArrayList<User> listUsers, ArrayList<Picture> pictures){
+        init(listUsers, pictures);
+        makeProfile(false, pictures);
     }
 
     private void setRoot(String pathFXML){
@@ -156,10 +161,11 @@ public class MainUI {
     }
     public void makeDisPlayImage(ArrayList<Picture> list, boolean option) {
         if (option) init(0.5, 0.0, -500.0, true);
-        System.out.println(mainWork.getLayoutX());
         setRoot("DisplayImage.fxml");
         DisplayImage displayImage = loader.getController();
         displayImage.setUser(user);
+        ManagerPicture managerPicture = new ManagerPicture();
+        list = managerPicture.getPictures(list);
         displayImage.init(list, "0", user);
         user = displayImage.getUser();
     }
@@ -173,20 +179,20 @@ public class MainUI {
         user = addImage.getUser();
     }
 
-    public void makeSearch() {
+    public void makeSearch(ArrayList<Picture> pictures) {
         init(0.5, 0.0, -500.0, true);
         setRoot("Search.fxml");
         Search search = loader.getController();
         Stage stage = (Stage)mainWork.getScene().getWindow();
-        search.makeSearch(stage, user);
+        search.makeSearch(stage, user, listUsers, pictures);
     }
 
-    public void makeProfile(boolean option){
+    public void makeProfile(boolean option, ArrayList<Picture> pictures){
         if (option) init(0.5, 0.0, -500.0, true);
         setRoot("Profile.fxml");
         Profile profile = loader.getController();
         profile.setUser(user);
-        profile.process(user);
+        profile.process(user, listUsers, pictures);
         user = profile.getUser();
     }
 
@@ -207,7 +213,7 @@ public class MainUI {
             main.getChildren().clear();
             main.getChildren().add(root);
             InitApp initApp = loader.getController();
-            initApp.init();
+            initApp.init(listUsers);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

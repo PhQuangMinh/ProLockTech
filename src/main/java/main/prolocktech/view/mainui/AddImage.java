@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import main.prolocktech.controller.FileImage;
+import main.prolocktech.controller.FirebaseImage;
 import main.prolocktech.model.User;
 
 import java.io.File;
@@ -48,23 +48,36 @@ public class AddImage{
         clip.setArcWidth(40);
         imageView.setClip(clip);
     }
-    private void makeImageAdd(Stage stage) {
-        setClip();
+
+    private File fileChooserEvent(Stage stage){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Add image");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
-        File file = fileChooser.showOpenDialog(stage);
-        if (file==null) {
-            inform.setTextFill(Color.RED);
-            inform.setText("Failed to add image");
-            return;
-        }
+        return fileChooser.showOpenDialog(stage);
+    }
+
+    private void informFailed(){
+        inform.setTextFill(Color.RED);
+        inform.setText("Failed to add image");
+    }
+
+    private void informSuccess(){
         inform.setTextFill(Color.GREEN);
         inform.setText("Successfully added image");
+    }
+
+    private void makeImageAdd(Stage stage) {
+        setClip();
+        File file = fileChooserEvent(stage);
+        if (file==null) {
+            informFailed();
+            return;
+        }
+        informSuccess();
         Image image = new Image(file.toURI().toString(), 300, 300, false, true);
         imageView.setPreserveRatio(true);
         imageView.setImage(image);
-        FileImage fileImage = new FileImage();
-        fileImage.writeImage(file.toURI().toString(), image, user);
+        FirebaseImage firebaseImage = new FirebaseImage();
+        firebaseImage.writeImageUpload(user, file.toURI().toString(), file);
     }
 }

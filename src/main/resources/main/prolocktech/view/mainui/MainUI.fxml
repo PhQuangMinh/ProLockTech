@@ -11,7 +11,7 @@
 
 <AnchorPane fx:id="main" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.prolocktech.view.mainui.MainUI">
    <AnchorPane fx:id="mainWork" layoutX="50.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="550.0" styleClass="mainWork" stylesheets="@../MainUI.css" />
-   <AnchorPane fx:id="paneBlur" layoutX="50.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="550.0" styleClass="paneBlur" stylesheets="@../MainUI.css" />
+   <AnchorPane fx:id="paneBlur" layoutX="50.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="550.0" styleClass="paneBlur" stylesheets="@../MainUI.css" visible="false" />
    <VBox fx:id="slideBar" alignment="TOP_CENTER" layoutX="-450.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="170.0" spacing="5.0" styleClass="slideBar" stylesheets="@../MainUI.css">
       <VBox alignment="TOP_CENTER" prefHeight="180.0" prefWidth="170.0" styleClass="frame-avatar" stylesheets="@../style.css">
          <ImageView fx:id="avatar" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">

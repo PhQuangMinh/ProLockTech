@@ -10,7 +10,6 @@ public class SendMail {
     private final String from = "prolocktechming@gmail.com";
     private final String password = "ilhctgcobniuovfr";
     public String sendMail(String to){
-        // Cài đặt thuộc tính cho SMTP server
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");//SMTP yêu cầu xác thực
         props.put("mail.smtp.starttls.enable", "true");//Kích hoạt TLS (Transport Layer Security) cho kết nối SMTP.

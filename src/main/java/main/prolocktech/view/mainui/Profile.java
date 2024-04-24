@@ -1,11 +1,10 @@
 package main.prolocktech.view.mainui;
+
 import com.jfoenix.controls.JFXButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -13,15 +12,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import main.prolocktech.controller.FileImage;
-import main.prolocktech.controller.FileUser;
+import main.prolocktech.controller.FirebaseImage;
+import main.prolocktech.controller.FirebaseUser;
+import main.prolocktech.model.DateOfBirth;
+import main.prolocktech.model.Picture;
 import main.prolocktech.model.User;
-import main.prolocktech.view.mainui.MainUI;
+import main.prolocktech.view.forgotpassword.CodeOTP;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,12 +44,17 @@ public class Profile{
     @FXML
     private Label inform;
 
-    private Image image;
+    @FXML
+    private AnchorPane pane;
     private File file;
     private User user;
+
+    private ArrayList<User> listUsers;
+
     public void setUser(User user) {
         this.user = user;
     }
+
     public User getUser() {
         return user;
     }
@@ -61,7 +67,9 @@ public class Profile{
         clip.setArcWidth(150);
         imageView.setClip(clip);
     }
-    public void process(User user){
+    public void process(User user, ArrayList<User> listUsers, ArrayList<Picture> pictures){
+        this.listUsers = listUsers;
+        this.user = user;
         setClip();
         firstName.setText(user.getFirstName());
         lastName.setText(user.getLastName());
@@ -71,6 +79,9 @@ public class Profile{
         setButton(false);
         setAvatar();
         inform.setVisible(false);
+        editProfile.setOnAction(event -> editProfileEvent());
+        updateProfile.setOnAction(event -> updateProfileEvent(pictures));
+        cancel.setOnAction(event -> cancelEvent());
     }
 
 
@@ -115,13 +126,13 @@ public class Profile{
     }
 
     private void setAvatar(){
-        FileImage fileImage = new FileImage();
-        ArrayList<ImageView> list = fileImage.getImageFromFolder("information/imageuser/user" + user.getIndex() + "/avatar");
-        imageView.setImage(list.get(0).getImage());
+        FirebaseImage firebaseImage = new FirebaseImage();
+        imageView.setImage(firebaseImage.getAvatar(user));
+        imageView.setPreserveRatio(false);
     }
 
-    public void editImageEvent(MouseEvent event){
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+    public void editImageEvent(){
+        Stage stage = (Stage)pane.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("File Chooser");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
@@ -129,7 +140,6 @@ public class Profile{
         if (file!=null) {
             Image image = new Image(file.toURI().toString(), 300, 300, false, true);
             imageView.setImage(image);
-            this.image = image;
             this.file = file;
             System.out.println("Luu avatar thanh cong");
         }
@@ -145,9 +155,7 @@ public class Profile{
     }
 
     private boolean checkEmail(){
-        FileUser fileUser = new FileUser();
-        ArrayList<User> list = fileUser.readUser();
-        for (User user : list) {
+        for (User user : listUsers) {
             if (user.getIndex().equals(this.user.getIndex())) continue;
             if (user.getEmail().equals(email.getText())) {
                 return false;
@@ -156,46 +164,54 @@ public class Profile{
         return true;
     }
     private int checkValid(){
-        if ( checkText()) return 1;
+        if (checkText()) return 1;
         if (!checkEmail()) return 2;
         return 0;
     }
-    public void updateProfileEvent(ActionEvent actionEvent) {
-        inform.setVisible(true);
-        if (checkValid()>0) {
-            inform.setTextFill(Color.RED);
-            if (checkValid()==1) inform.setText("Please provide complete information.");
-            else inform.setText("Email already exists!");
-            return;
-        }
-        if (file!=null){
-            FileImage fileImage = new FileImage();
-            fileImage.saveAvatar(file.toURI().toString(), user, image);
-        }
-        User newUser = user;
-        newUser.setFirstName(firstName.getText());
-        newUser.setLastName(lastName.getText());
-        newUser.setEmail(email.getText());
 
-        setInformation(false);
-        setButton(false);
-
-        FileUser managerFile = new FileUser();
-        managerFile.updateUser(user, newUser);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainUI.fxml"));
+    private void updateEmail(ArrayList<Picture> pictures, User newUser){
         try {
-            Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(CodeOTP.class.getResource("CodeOTP.fxml"));
             Parent root = loader.load();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            MainUI main = loader.getController();
-            main.setUser(user);
-            main.returnProfile();
+            CodeOTP codeOTP = loader.getController();
+            pane.getChildren().clear();
+            AnchorPane anchorPane = new AnchorPane(root);
+            anchorPane.setLayoutX(100);
+            pane.getChildren().add(anchorPane);
+            codeOTP.init(email.getText(), user.getIndex(), user, newUser, listUsers, pictures, file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    @FXML
+
+    private User getNewUser(){
+        User newUser = user;
+        newUser.setFirstName(firstName.getText());
+        newUser.setLastName(lastName.getText());
+        newUser.setEmail(email.getText());
+        newUser.setDate(new DateOfBirth(day.getPromptText(), month.getPromptText(), year.getPromptText()));
+        return newUser;
+    }
+
+    private void inform(int check){
+        inform.setVisible(true);
+        inform.setTextFill(Color.RED);
+        if (check==1) inform.setText("Please provide complete information.");
+        else inform.setText("Email already exists!");
+    }
+
+
+    public void updateProfileEvent(ArrayList<Picture> pictures) {
+        int check = checkValid();
+        if (check==0){
+            setInformation(false);
+            setButton(false);
+            User newUser = getNewUser();
+            updateEmail(pictures, newUser);
+            return;
+        }
+        inform(check);
+    }
     private void cancelEvent(){
         setAvatar();
         firstName.setText(user.getFirstName());

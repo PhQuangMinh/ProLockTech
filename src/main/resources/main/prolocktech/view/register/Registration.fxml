@@ -80,13 +80,13 @@
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Button>
-      <Label fx:id="inform" layoutX="19.0" layoutY="467.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="200.0" />
+      <Label fx:id="inform" layoutX="40.0" layoutY="467.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="200.0" />
       <Label layoutX="40.0" layoutY="340.0" opacity="0.62" text="At least 8 characters">
          <font>
             <Font size="10.0" />
          </font>
       </Label>
-      <Label fx:id="signIn" layoutX="205.0" layoutY="549.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#cancel" styleClass="label-button" stylesheets="@../style.css" text="Sign in">
+      <Label fx:id="signIn" layoutX="205.0" layoutY="549.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="label-button" stylesheets="@../style.css" text="Sign in">
          <font>
             <Font name="Ebrima Bold" size="14.0" />
          </font>

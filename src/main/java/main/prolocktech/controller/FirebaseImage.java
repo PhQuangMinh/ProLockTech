@@ -5,27 +5,18 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import main.prolocktech.model.Picture;
 import main.prolocktech.model.User;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
+import java.io.*;
 import java.util.*;
 
-public class FirebaseImage implements Initializable {
+public class FirebaseImage{
     private final String nameBucket = "proptitlocktech.appspot.com";
     private Storage storage;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void init() {
         String locationFile = "proptitlocktech-firebase-adminsdk-xp853-e2fde6529e.json";
         try {
             FileInputStream serviceAccountFile = new FileInputStream(locationFile);
@@ -44,26 +35,30 @@ public class FirebaseImage implements Initializable {
         return path.substring(index);
     }
 
-    public void writeImageTo(User user, String pathImage, String pathFirebase, int option){
-        user.setNumberOfImages(user.getNumberOfImages()+1);
-        if (option==1) pathFirebase += getExtension(pathImage);
+    public void writeImageTo(String pathImage, String pathFirebase, int option, File file){
+        init();
+        if (option==1){
+            pathFirebase += getExtension(pathImage);
+        }
         else pathFirebase+= ".png";
         try {
-            FileInputStream file = new FileInputStream(pathImage);
-            Blob blob = storage.create(Blob.newBuilder(nameBucket, pathFirebase).build(), file);
+            FileInputStream fileInput = new FileInputStream(file);
+            Blob blob = storage.create(Blob.newBuilder(nameBucket, pathFirebase).build(), fileInput);
             System.out.println("File uploaded to: " + blob.getBlobId());
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void writeImageUpload(User user, String pathImage){
-        String path = "user" + user.getIndex() + "/image" + user.getNumberOfImages();
-        writeImageTo(user, pathImage, path, 1);
+    public void writeImageUpload(User user, String pathImage, File file){
+        String pathFirebase = "user" + user.getIndex() + "/image" + user.getNumberOfImages();
+        user.setNumberOfImages(user.getNumberOfImages()+1);
+        writeImageTo(pathImage, pathFirebase, 1, file);
     }
-    public void writeAvatar(User user, String pathImage){
-        String path = "user" + user.getIndex() + "/avatar/avatar.png";
-        writeImageTo(user, pathImage, path, 2);
+    public void setAvatar(User user, String pathImage, File file){
+        init();
+        String path = "user" + user.getIndex() + "/avatar/avatar";
+        writeImageTo(pathImage, path, 2, file);
     }
 
     private boolean isImage(String name){
@@ -74,7 +69,8 @@ public class FirebaseImage implements Initializable {
     }
 
     private List<Blob> getListBlob(User user){
-        String folderName = "user" + user.getIndex() + "/";
+        init();
+        String folderName = "user" + user.getIndex() + "/image";
         Page<Blob> blobs = storage.list(nameBucket, Storage.BlobListOption.prefix(folderName));
         List<Blob> blobList = new ArrayList<>();
         for (Blob blob : blobs.iterateAll()) {
@@ -86,52 +82,50 @@ public class FirebaseImage implements Initializable {
     }
 
     private Image getImage(Blob blob) {
-        try {
-            byte[] blobContent = blob.getContent();
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(blobContent);
-            BufferedImage bufferedImage = ImageIO.read(inputStream);
-            return SwingFXUtils.toFXImage(bufferedImage, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (blob != null) {
+            byte[] blobData = blob.getContent();
+            return new Image(new ByteArrayInputStream(blobData));
         }
-    }
-
-    private int cmp(Picture a, Picture b) {
-        if (a.getCreationTime()<b.getCreationTime()) return 1;
-        return -1;
+        return null;
     }
 
     private ArrayList<Picture> convertBlob(List<Blob> list, User user){
         ArrayList<Picture> listPicture = new ArrayList<>();
         for(Blob blob : list) {
             Image image = getImage(blob);
-            Picture picture = new Picture(image, user, blob);
+            long creationTime = blob.getCreateTime();
+            Picture picture = new Picture(user, creationTime, blob.getName());
+            picture.setFitHeight(400);
+            picture.setFitWidth(400);
+            picture.setImage(image);
+            picture.setPreserveRatio(false);
             listPicture.add(picture);
         }
-        listPicture.sort(this::cmp);
         return listPicture;
     }
-    public ArrayList<Picture> readPictureUser(User user){
+    public ArrayList<Picture> getPictureUser(User user){
         List<Blob> listBlob = getListBlob(user);
         return convertBlob(listBlob, user);
     }
 
-    public ArrayList<Picture> readPictures(){
-        ArrayList<Picture> list = new ArrayList<>();
-        List<Blob> listBlob = new ArrayList<>();
-        FirebaseUser firebaseUser = new FirebaseUser();
-//        ArrayList<User> users = firebaseUser.readUser();
-//        for (User user : users) {
-//            listBlob.addAll(getListBlob(user));
-//            list.addAll(convertBlob(listBlob, user));
-//        }
-//        list.sort(this::cmp);
-        return list;
+
+    public ArrayList<Picture> getPictures(ArrayList<User> listUsers){
+        ArrayList<Picture> listPicture = new ArrayList<>();
+        for (User user: listUsers) {
+            listPicture.addAll(convertBlob(getListBlob(user), user));
+        }
+        return listPicture;
     }
 
     public Image getAvatar(User user){
+        init();
         String path = "user" + user.getIndex() + "/avatar/avatar.png";
         Blob blob = storage.get(Blob.newBuilder(nameBucket, path).build().getBlobId());
         return getImage(blob);
+    }
+
+    public void deleteImage(String pathFile){
+        init();
+        storage.delete(Blob.newBuilder(nameBucket, pathFile).build().getBlobId());
     }
 }

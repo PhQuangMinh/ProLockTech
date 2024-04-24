@@ -5,7 +5,6 @@ module main.prolocktech {
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
-    requires com.almasb.fxgl.all;
     requires java.desktop;
     requires firebase.admin;
     requires com.google.auth.oauth2;
@@ -18,7 +17,7 @@ module main.prolocktech {
     requires java.mail;
     requires com.jfoenix;
 
-    opens main.prolocktech.model to javafx.fxml;
+    opens main.prolocktech.model to firebase.admin;
     opens main.prolocktech to javafx.fxml;
     opens main.prolocktech.view to javafx.fxml;
     opens main.prolocktech.controller to javafx.fxml;

@@ -1,41 +1,37 @@
 package main.prolocktech.controller;
 
-import javafx.util.Duration;
+import main.prolocktech.model.Picture;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.time.Instant;
+import java.util.ArrayList;
 
 public class ManagerPicture {
-    public String getTime(File file){
-        Path path = file.toPath();
-
-        try {
-            BasicFileAttributes fatr = Files.readAttributes(path, BasicFileAttributes.class);
-            long createTine = fatr.creationTime().toMillis();
-            long now = System.currentTimeMillis();
-            long duration = now - createTine;
-            duration/=1000;
-            String time;
-            if (duration < 60) {
-                time = duration + "sec";
-            }
-            else if (duration < 3600) {
-                time = duration / 60 + "min";
-            }
-            else if (duration < 86400) {
-                time = duration / 3600 + "h";
-            }
-            else {
-                time = duration / 86400 + "days";
-            }
-            return time;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public String getTime(Picture picture) {
+        long createTine = picture.getTimeCreated();
+        long now = System.currentTimeMillis();
+        long duration = now - createTine;
+        duration/=1000;
+        String time;
+        if (duration < 60) {
+            time = duration + "sec";
         }
+        else if (duration < 3600) {
+            time = duration / 60 + "min";
+        }
+        else if (duration < 86400) {
+            time = duration / 3600 + "h";
+        }
+        else {
+            time = duration / 86400 + "days";
+        }
+        return time;
+    }
+    private int cmp(Picture a, Picture b) {
+        if (a.getTimeCreated() < b.getTimeCreated()) return 1;
+        return -1;
     }
 
+    public ArrayList<Picture> getPictures(ArrayList<Picture> listPictures){
+        listPictures.sort(this::cmp);
+        return listPictures;
+    }
 }

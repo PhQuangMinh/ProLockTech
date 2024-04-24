@@ -1,7 +1,6 @@
 package main.prolocktech.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class User implements Serializable {
     private String index;
@@ -11,11 +10,8 @@ public class User implements Serializable {
     private String password;
     private DateOfBirth date;
     private int numberOfImages;
-    public User(String firstName, String lastName, String email){
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
+
+    public User() {}
 
     public User(String firstName, String lastName, String email, String password, DateOfBirth date) {
         this.firstName = firstName;
@@ -24,16 +20,6 @@ public class User implements Serializable {
         this.password = password;
         this.date = date;
         this.numberOfImages = 0;
-    }
-
-    public User(String index, String firstName, String lastName, String email, String password, DateOfBirth date, int numberOfImages) {
-        this.index = index;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.date = date;
-        this.numberOfImages = numberOfImages;
     }
 
 
